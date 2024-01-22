@@ -2,7 +2,41 @@ cmake_policy(PUSH)
 cmake_policy(SET CMP0012 NEW)
 cmake_policy(SET CMP0054 NEW)
 
-_find_package(${ARGS})
+#CMake comes with FindFreetype module which conflicts with Freetype 2.13.0's freetype-config.cmake
+#which now defines the same target. To fix this, we stop the Freetype module from running, and just
+# use the configs settings instead.
+list(REMOVE_ITEM ARGS NO_MODULE CONFIG MODULE)
+_find_package(${ARGS} NAMES freetype)
+
+if(TARGET Freetype::Freetype)
+    # we need to make sure that targets that previously depended on the module definition of Freetype still have access
+    # to the exposed result variables needed here:
+    # https://cmake.org/cmake/help/latest/module/FindFreetype.html#result-variables
+    # Those variables are:
+    # FREETYPE_FOUND
+    # FREETYPE_INCLUDE_DIRS
+    # FREETYPE_LIBRARIES
+    # FREETYPE_VERSION_STRING
+#    set(FREETYPE_FOUND TRUE)
+#
+#    get_target_property(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES Freetype::Freetype INTERFACE_LINK_LIBRARIES)
+#    get_target_property(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_LINK_LIBRARIES Freetype::Freetype LINK_LIBRARIES)
+#    set(FREETYPE_LIBRARIES "")
+#    list(APPEND FREETYPE_LIBRARIES ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES})
+#    list(APPEND FREETYPE_LIBRARIES ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_LINK_LIBRARIES})
+#    unset(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES)
+#    unset(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_LINK_LIBRARIES)
+#
+#
+#    get_target_property(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES Freetype::Freetype INTERFACE_INCLUDE_DIRECTORIES)
+#    get_target_property(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INCLUDE_DIRECTORIES Freetype::Freetype INCLUDE_DIRECTORIES)
+#    set(FREETYPE_INCLUDE_DIRS "")
+#    list(APPEND FREETYPE_INCLUDE_DIRS ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES})
+#    list(APPEND FREETYPE_INCLUDE_DIRS ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INCLUDE_DIRECTORIES})
+#    unset(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES)
+#    unset(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INCLUDE_DIRECTORIES)
+
+endif()
 
 if("@VCPKG_LIBRARY_LINKAGE@" STREQUAL "static")
     if("@FT_REQUIRE_ZLIB@")
