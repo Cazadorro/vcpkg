@@ -34,13 +34,8 @@ set(FREETYPE_FOUND TRUE)
 get_target_property(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES Freetype::Freetype INTERFACE_LINK_LIBRARIES)
 set(FREETYPE_LIBRARIES "")
 list(APPEND FREETYPE_LIBRARIES ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES})
-
-# Don't think we need these targets exposed, but they are mentioned in https://cmake.org/cmake/help/latest/module/FindFreetype.html#result-variables
-# so exposing them anyway.  In practice INTERFACE_LINK_LIBRARIES ends up just being the base install include
-# directory, and FREETYPE_INCLUDE_DIR_ft2build and FREETYPE_INCLUDE_DIR_freetype2 end up being the same thing
-set(FREETYPE_INCLUDE_DIR_ft2build ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES})
-set(FREETYPE_INCLUDE_DIR_freetype2 ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES})
 unset(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES)
+
 
 
 # Not trying to get INCLUDE_DIRECTORIES because only INTERFACE is exposed on the target as of this update.  In future updates
@@ -49,7 +44,14 @@ unset(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_LINK_LIBRARIES)
 get_target_property(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES freetype INTERFACE_INCLUDE_DIRECTORIES)
 set(FREETYPE_INCLUDE_DIRS "")
 list(APPEND FREETYPE_INCLUDE_DIRS ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES})
+
+# Don't think we need these targets exposed, but they are mentioned in https://cmake.org/cmake/help/latest/module/FindFreetype.html#result-variables
+# so exposing them anyway.  In practice INTERFACE_INCLUDE_DIRECTORIES ends up just being the base install include
+# directory, and FREETYPE_INCLUDE_DIR_ft2build and FREETYPE_INCLUDE_DIR_freetype2 end up being the same thing
+set(FREETYPE_INCLUDE_DIR_ft2build ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES})
+set(FREETYPE_INCLUDE_DIR_freetype2 ${TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES})
 unset(TEMP_VCPKG_FREETYPE_CONFIG_TARGET_INTERFACE_INCLUDE_DIRECTORIES)
+
 
 # Version is not set on Freetype::Freetype or freetype, we have to get it from this variable.
 set(FREETYPE_VERSION_STRING ${Freetype_VERSION})
